@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Owner Form')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: page(${owner.id == null} ? 'Add Owner' : 'Edit Owner', 'owners', ~{::content})}">
+    <th:block th:fragment="content">
+
+        <div class="panel form-panel">
+            <div class="panel-body">
+                <form th:action="@{/owners/save}" th:object="${owner}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+
+                    <div class="form-grid">
+                        <div class="form-group col-span-2">
+                            <label>Name</label>
+                            <input type="text" th:field="*{name}" placeholder="e.g. Olivia Owner"/>
+                            <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" th:field="*{email}" placeholder="owner@example.com"/>
+                            <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" th:field="*{phone}" placeholder="555-0100"/>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Owner</button>
+                        <a class="btn btn-light" th:href="@{/owners}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </th:block>
+</div>
+</body>
+</html>

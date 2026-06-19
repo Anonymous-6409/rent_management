@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Tenants')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: page('Tenants', 'tenants', ~{::content})}">
+    <th:block th:fragment="content">
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2>All Tenants</h2>
+                <a class="btn btn-primary" th:href="@{/tenants/new}">+ Add Tenant</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Property</th>
+                        <th>Lease Start</th>
+                        <th>Lease End</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="tenant : ${tenants}">
+                        <td class="cell-strong" th:text="${tenant.name}">Name</td>
+                        <td th:text="${tenant.email}">email</td>
+                        <td class="cell-muted" th:text="${tenant.phone}">phone</td>
+                        <td th:text="${tenant.property != null ? tenant.property.name : '-'}">Property</td>
+                        <td class="cell-muted" th:text="${tenant.leaseStart}">2026-01-01</td>
+                        <td class="cell-muted" th:text="${tenant.leaseEnd}">2026-12-31</td>
+                        <td>
+                            <div class="actions">
+                                <a class="btn btn-sm btn-edit" th:href="@{/tenants/edit/{id}(id=${tenant.id})}">Edit</a>
+                                <a class="btn btn-sm btn-delete" th:href="@{/tenants/delete/{id}(id=${tenant.id})}"
+                                   onclick="return confirm('Delete this tenant?');">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${tenants.isEmpty()}">
+                        <td colspan="7" class="empty">No tenants yet. Click "Add Tenant" to create one.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </th:block>
+</div>
+</body>
+</html>

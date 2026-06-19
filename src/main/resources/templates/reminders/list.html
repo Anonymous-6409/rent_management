@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reminders')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: page('Payment Reminders', 'reminders', ~{::content})}">
+    <th:block th:fragment="content">
+
+        <div th:if="${message}" class="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <span th:text="${message}">Status message</span>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2>Reminders</h2>
+                <div class="panel-actions">
+                    <form th:action="@{/reminders/generate}" method="post">
+                        <button type="submit" class="btn btn-primary">Generate for this period</button>
+                    </form>
+                    <form th:action="@{/reminders/send}" method="post">
+                        <button type="submit" class="btn btn-success">Send pending</button>
+                    </form>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Recipient</th>
+                        <th>To</th>
+                        <th>Tenant</th>
+                        <th>Property</th>
+                        <th>Period</th>
+                        <th>Amount</th>
+                        <th>Due</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="r : ${reminders}">
+                        <td><span class="badge" th:classappend="'badge-' + ${r.recipientType}"
+                                  th:text="${r.recipientType}">TENANT</span></td>
+                        <td th:text="${r.recipientEmail}">email</td>
+                        <td class="cell-strong" th:text="${r.tenant != null ? r.tenant.name : '-'}">Tenant</td>
+                        <td th:text="${r.property != null ? r.property.name : '-'}">Property</td>
+                        <td th:text="${r.periodMonth}">2026-06</td>
+                        <td class="cell-strong" th:text="${r.amountDue != null} ? '$' + ${#numbers.formatDecimal(r.amountDue, 1, 2)} : '-'">$0.00</td>
+                        <td class="cell-muted" th:text="${r.dueDate}">2026-06-05</td>
+                        <td><span class="badge" th:classappend="'badge-' + ${r.status}"
+                                  th:text="${r.status}">PENDING</span></td>
+                        <td>
+                            <div class="actions">
+                                <a class="btn btn-sm btn-delete" th:href="@{/reminders/delete/{id}(id=${r.id})}"
+                                   onclick="return confirm('Delete this reminder?');">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${reminders.isEmpty()}">
+                        <td colspan="9" class="empty">
+                            No reminders yet. Click "Generate for this period" to create them for tenants with unpaid rent.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </th:block>
+</div>
+</body>
+</html>

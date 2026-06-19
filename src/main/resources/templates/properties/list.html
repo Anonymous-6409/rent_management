@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Properties')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: page('Properties', 'properties', ~{::content})}">
+    <th:block th:fragment="content">
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2>All Properties</h2>
+                <a class="btn btn-primary" th:href="@{/properties/new}">+ Add Property</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Type</th>
+                        <th>Monthly Rent</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="property : ${properties}">
+                        <td class="cell-strong" th:text="${property.name}">Name</td>
+                        <td class="cell-muted" th:text="${property.address}">Address</td>
+                        <td th:text="${property.type}">Type</td>
+                        <td class="cell-strong" th:text="'$' + ${#numbers.formatDecimal(property.monthlyRent, 1, 2)}">$0.00</td>
+                        <td th:text="${property.owner != null ? property.owner.name : '-'}">Owner</td>
+                        <td><span class="badge" th:classappend="'badge-' + ${property.status}" th:text="${property.status}">VACANT</span></td>
+                        <td>
+                            <div class="actions">
+                                <a class="btn btn-sm btn-edit" th:href="@{/properties/edit/{id}(id=${property.id})}">Edit</a>
+                                <a class="btn btn-sm btn-delete" th:href="@{/properties/delete/{id}(id=${property.id})}"
+                                   onclick="return confirm('Delete this property?');">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${properties.isEmpty()}">
+                        <td colspan="7" class="empty">No properties yet. Click "Add Property" to create one.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </th:block>
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Owners')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: page('Owners', 'owners', ~{::content})}">
+    <th:block th:fragment="content">
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2>All Owners</h2>
+                <a class="btn btn-primary" th:href="@{/owners/new}">+ Add Owner</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Properties</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="owner : ${owners}">
+                        <td class="cell-strong" th:text="${owner.name}">Name</td>
+                        <td th:text="${owner.email}">email</td>
+                        <td class="cell-muted" th:text="${owner.phone}">phone</td>
+                        <td th:text="${owner.properties.size()}">0</td>
+                        <td>
+                            <div class="actions">
+                                <a class="btn btn-sm btn-edit" th:href="@{/owners/edit/{id}(id=${owner.id})}">Edit</a>
+                                <a class="btn btn-sm btn-delete" th:href="@{/owners/delete/{id}(id=${owner.id})}"
+                                   onclick="return confirm('Delete this owner?');">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${owners.isEmpty()}">
+                        <td colspan="5" class="empty">No owners yet. Click "Add Owner" to create one.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </th:block>
+</div>
+</body>
+</html>

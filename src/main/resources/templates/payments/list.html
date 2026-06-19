@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Payments')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: page('Payments', 'payments', ~{::content})}">
+    <th:block th:fragment="content">
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2>All Payments</h2>
+                <a class="btn btn-primary" th:href="@{/payments/new}">+ Record Payment</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Tenant</th>
+                        <th>Period</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="payment : ${payments}">
+                        <td class="cell-strong" th:text="${payment.tenant != null ? payment.tenant.name : '-'}">Tenant</td>
+                        <td th:text="${payment.periodMonth}">2026-06</td>
+                        <td class="cell-strong" th:text="'$' + ${#numbers.formatDecimal(payment.amount, 1, 2)}">$0.00</td>
+                        <td class="cell-muted" th:text="${payment.paymentDate}">2026-06-01</td>
+                        <td><span class="badge" th:classappend="'badge-' + ${payment.status}" th:text="${payment.status}">PAID</span></td>
+                        <td>
+                            <div class="actions">
+                                <a class="btn btn-sm btn-edit" th:href="@{/payments/edit/{id}(id=${payment.id})}">Edit</a>
+                                <a class="btn btn-sm btn-delete" th:href="@{/payments/delete/{id}(id=${payment.id})}"
+                                   onclick="return confirm('Delete this payment?');">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${payments.isEmpty()}">
+                        <td colspan="6" class="empty">No payments yet. Click "Record Payment" to add one.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </th:block>
+</div>
+</body>
+</html>
