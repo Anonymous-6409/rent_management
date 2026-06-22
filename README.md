@@ -20,7 +20,48 @@ It lets you manage **Properties**, **Tenants**, and **Rent Payments** through a 
 - **Tenants** – CRUD, linked to a property, with lease start/end dates.
 - **Payments** – record rent payments per tenant, per period, with status (PAID / PENDING / OVERDUE).
 - **Payment reminders** – for both tenants and owners (see below).
+- **Authentication** – form login + self-registration, backed by a `users` table (see below).
 - Server-side validation with inline error messages.
+
+## Authentication & Login
+
+The whole management UI is protected by **Spring Security** form login.
+
+- **Users** are stored in a `users` table with **BCrypt**-hashed passwords (`CustomUserDetailsService`).
+- **Login** at `/login`; **self sign-up** at `/register` (new accounts get the `USER` role).
+- **Logout** from the button in the sidebar footer.
+- A **default admin** is seeded on first start-up if it doesn't exist:
+  - username `admin`, password `admin123` (configurable — see below). **Change it after first login.**
+- Public paths: `/login`, `/register`, and static assets. Everything else requires authentication.
+- CSRF protection is enabled (Thymeleaf injects the token into all `th:action` forms automatically).
+
+### Roles & owner login
+
+There are three roles: **ADMIN**, **OWNER**, **USER**.
+
+| Role | Access |
+|------|--------|
+| **ADMIN** | Full access — manages owners, properties, tenants, payments, reminders. |
+| **OWNER** | **Manages their own data**: create / edit / delete *their own* properties, tenants, payments, and generate/send *their own* reminders, plus a scoped dashboard. Cannot see or touch other owners' data. |
+| **USER** | A self-registered account not yet linked to an owner — sees nothing until an admin links it. |
+
+Enforcement is layered:
+- **URL rules** (`SecurityConfig`): `/owners/**` is admin-only; create/edit/delete/generate/send are `hasAnyRole('ADMIN','OWNER')`.
+- **Record-level ownership** (controllers): an owner may only edit/delete records belonging to them; new records are auto-tied to the owner, and form dropdowns are scoped to their data (`AccessDeniedException` / 403 otherwise).
+- **UI** (`sec:authorize`): Add/Edit/Delete controls render for admins and owners; the Owners menu/card stay admin-only.
+
+**Creating owner logins** — two ways, both supported:
+1. **Auto-provisioned**: when an admin adds an `Owner`, a linked `OWNER` login is created (username = the owner's email) with a temporary password that is **emailed to the owner** (and shown once on the Owners page as a fallback when SMTP isn't configured).
+2. **Link a self-registered user**: a person signs up at `/register` (role `USER`), then an admin opens that owner's **edit page** and links the registered account, which promotes it to `OWNER`.
+
+### Change password
+
+Every signed-in user can change their own password from the **key icon** in the sidebar footer (`/account/password`) — it verifies the current password before updating.
+
+```properties
+app.security.admin.username=admin
+app.security.admin.password=admin123
+```
 
 ## Payment Reminder System
 

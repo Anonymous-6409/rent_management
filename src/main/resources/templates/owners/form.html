@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Owner Form')}"></head>
 <body>
 <div th:replace="~{fragments/layout :: page(${owner.id == null} ? 'Add Owner' : 'Edit Owner', 'owners', ~{::content})}">
@@ -34,6 +35,54 @@
                         <a class="btn btn-light" th:href="@{/owners}">Cancel</a>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Login account management (edit mode only) -->
+        <div class="panel form-panel" th:if="${owner.id != null}">
+            <div class="panel-header">
+                <h2>Login account</h2>
+            </div>
+            <div class="panel-body">
+                <div th:if="${message}" class="alert" style="margin-bottom:18px;">
+                    <span th:text="${message}">linked</span>
+                </div>
+
+                <!-- Already linked -->
+                <div th:if="${ownerAccount != null}">
+                    <p style="margin-bottom:6px;">
+                        This owner can log in as
+                        <strong th:text="${ownerAccount.username}">user</strong>
+                        (role <span th:text="${ownerAccount.role}">OWNER</span>).
+                    </p>
+                    <p class="cell-muted" style="font-size:0.88rem;">
+                        They see only their own properties, tenants, payments, and reminders.
+                    </p>
+                </div>
+
+                <!-- Not linked: offer to link an existing self-registered user -->
+                <div th:if="${ownerAccount == null}">
+                    <p class="cell-muted" style="margin-bottom:14px;font-size:0.9rem;">
+                        No login is linked to this owner yet. Link an existing self-registered account, or
+                        re-create the owner to auto-provision one.
+                    </p>
+
+                    <form th:if="${!linkableUsers.isEmpty()}" th:action="@{/owners/{id}/link(id=${owner.id})}"
+                          method="post" style="display:flex;gap:12px;align-items:flex-end;">
+                        <div class="form-group" style="flex:1;margin:0;">
+                            <label>Select a registered user</label>
+                            <select name="userId">
+                                <option th:each="u : ${linkableUsers}" th:value="${u.id}"
+                                        th:text="${u.username} + ' (' + ${u.fullName} + ')'">user</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Link account</button>
+                    </form>
+
+                    <p th:if="${linkableUsers.isEmpty()}" class="cell-muted" style="font-size:0.9rem;">
+                        There are no unlinked registered users to link right now.
+                    </p>
+                </div>
             </div>
         </div>
 

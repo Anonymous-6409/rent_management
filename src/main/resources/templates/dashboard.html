@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
 <body>
 <div th:replace="~{fragments/layout :: page('Dashboard', 'dashboard', ~{::content})}">
     <th:block th:fragment="content">
 
         <div class="cards">
-            <div class="stat">
+            <div class="stat" sec:authorize="hasRole('ADMIN')">
                 <div class="stat-icon ic-blue">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round">
@@ -69,7 +70,7 @@
         <div class="panel">
             <div class="panel-header">
                 <h2>Recent Payments</h2>
-                <a class="btn btn-primary" th:href="@{/payments/new}">+ Record Payment</a>
+                <a class="btn btn-primary" th:href="@{/payments/new}" sec:authorize="hasAnyRole('ADMIN','OWNER')">+ Record Payment</a>
             </div>
             <div class="table-wrap">
                 <table>

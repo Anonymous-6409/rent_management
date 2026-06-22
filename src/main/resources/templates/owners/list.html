@@ -5,6 +5,28 @@
 <div th:replace="~{fragments/layout :: page('Owners', 'owners', ~{::content})}">
     <th:block th:fragment="content">
 
+        <div th:if="${ownerLogin}" class="alert" style="background:#dcfce7;border-color:#bbf7d0;color:#15803d;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span>
+                Owner login created — username <strong th:text="${ownerLogin.username}">email</strong>,
+                temporary password <strong th:text="${ownerLogin.password}">pw</strong>.
+                <span th:if="${ownerLogin.emailed}">These credentials were emailed to the owner.</span>
+                <span th:unless="${ownerLogin.emailed}">Email is not configured, so share these securely — they won't be shown again.</span>
+            </span>
+        </div>
+
+        <div th:if="${ownerLoginWarning}" class="alert" style="background:#fef3c7;border-color:#fde68a;color:#b45309;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span th:text="${ownerLoginWarning}">warning</span>
+        </div>
+
         <div class="panel">
             <div class="panel-header">
                 <h2>All Owners</h2>

@@ -52,6 +52,15 @@ public class ReminderService {
         return reminderRepository.findAllByOrderByCreatedAtDesc();
     }
 
+    public List<Reminder> findByOwner(Long ownerId) {
+        return reminderRepository.findByPropertyOwnerIdOrderByCreatedAtDesc(ownerId);
+    }
+
+    public Reminder findById(Long id) {
+        return reminderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid reminder id: " + id));
+    }
+
     public void deleteById(Long id) {
         reminderRepository.deleteById(id);
     }
@@ -60,18 +69,35 @@ public class ReminderService {
         return reminderRepository.count();
     }
 
-    /** Generate reminders for the current calendar month. */
+    /** Generate reminders for the current calendar month (all tenants). */
     public List<Reminder> generateRemindersForCurrentPeriod() {
-        return generateReminders(YearMonth.now());
+        return generateReminders(YearMonth.now(), null);
     }
 
-    /** Generate reminders for the given billing period, skipping tenants already paid. */
+    /** Generate reminders for the current calendar month, limited to one owner's tenants. */
+    public List<Reminder> generateRemindersForCurrentPeriod(Long ownerId) {
+        return generateReminders(YearMonth.now(), ownerId);
+    }
+
+    /** Generate reminders for the given billing period (all tenants), skipping tenants already paid. */
     public List<Reminder> generateReminders(YearMonth period) {
+        return generateReminders(period, null);
+    }
+
+    /**
+     * Generate reminders for the given billing period, skipping tenants already paid.
+     * When {@code ownerId} is non-null, only that owner's tenants are considered.
+     */
+    public List<Reminder> generateReminders(YearMonth period, Long ownerId) {
         String periodMonth = period.toString(); // yyyy-MM
         LocalDate dueDate = period.atDay(Math.min(dueDay, period.lengthOfMonth()));
         List<Reminder> created = new ArrayList<>();
 
-        for (Tenant tenant : tenantRepository.findAll()) {
+        List<Tenant> tenants = (ownerId == null)
+                ? tenantRepository.findAll()
+                : tenantRepository.findByPropertyOwnerId(ownerId);
+
+        for (Tenant tenant : tenants) {
             Property property = tenant.getProperty();
             if (property == null) {
                 continue; // no property -> nothing to bill
@@ -137,7 +163,15 @@ public class ReminderService {
 
     /** Dispatch every PENDING reminder via the active {@link NotificationSender}. */
     public int sendPendingReminders() {
-        List<Reminder> pending = reminderRepository.findByStatus(ReminderStatus.PENDING);
+        return dispatch(reminderRepository.findByStatus(ReminderStatus.PENDING));
+    }
+
+    /** Dispatch PENDING reminders that belong to one owner's properties. */
+    public int sendPendingReminders(Long ownerId) {
+        return dispatch(reminderRepository.findByStatusAndPropertyOwnerId(ReminderStatus.PENDING, ownerId));
+    }
+
+    private int dispatch(List<Reminder> pending) {
         int sent = 0;
         for (Reminder reminder : pending) {
             try {

@@ -21,6 +21,10 @@ public class PaymentService {
         return paymentRepository.findAll();
     }
 
+    public List<Payment> findByOwner(Long ownerId) {
+        return paymentRepository.findByTenantPropertyOwnerId(ownerId);
+    }
+
     public Payment findById(Long id) {
         return paymentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid payment id: " + id));
@@ -39,7 +43,15 @@ public class PaymentService {
     }
 
     public BigDecimal totalCollected() {
-        return paymentRepository.findAll().stream()
+        return sumPaid(paymentRepository.findAll());
+    }
+
+    public BigDecimal totalCollectedByOwner(Long ownerId) {
+        return sumPaid(paymentRepository.findByTenantPropertyOwnerId(ownerId));
+    }
+
+    private BigDecimal sumPaid(List<Payment> payments) {
+        return payments.stream()
                 .filter(p -> p.getStatus() == PaymentStatus.PAID)
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

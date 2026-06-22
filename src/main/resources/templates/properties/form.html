@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Property Form')}"></head>
 <body>
 <div th:replace="~{fragments/layout :: page(${property.id == null} ? 'Add Property' : 'Edit Property', 'properties', ~{::content})}">
@@ -42,7 +43,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" sec:authorize="hasRole('ADMIN')">
                             <label>Owner</label>
                             <select th:field="*{owner}">
                                 <option th:value="null">-- None --</option>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Payments')}"></head>
 <body>
 <div th:replace="~{fragments/layout :: page('Payments', 'payments', ~{::content})}">
@@ -8,7 +9,7 @@
         <div class="panel">
             <div class="panel-header">
                 <h2>All Payments</h2>
-                <a class="btn btn-primary" th:href="@{/payments/new}">+ Record Payment</a>
+                <a class="btn btn-primary" th:href="@{/payments/new}" sec:authorize="hasAnyRole('ADMIN','OWNER')">+ Record Payment</a>
             </div>
             <div class="table-wrap">
                 <table>
@@ -19,7 +20,7 @@
                         <th>Amount</th>
                         <th>Date</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th sec:authorize="hasAnyRole('ADMIN','OWNER')">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -29,7 +30,7 @@
                         <td class="cell-strong" th:text="'$' + ${#numbers.formatDecimal(payment.amount, 1, 2)}">$0.00</td>
                         <td class="cell-muted" th:text="${payment.paymentDate}">2026-06-01</td>
                         <td><span class="badge" th:classappend="'badge-' + ${payment.status}" th:text="${payment.status}">PAID</span></td>
-                        <td>
+                        <td sec:authorize="hasAnyRole('ADMIN','OWNER')">
                             <div class="actions">
                                 <a class="btn btn-sm btn-edit" th:href="@{/payments/edit/{id}(id=${payment.id})}">Edit</a>
                                 <a class="btn btn-sm btn-delete" th:href="@{/payments/delete/{id}(id=${payment.id})}"

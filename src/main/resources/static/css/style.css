@@ -538,6 +538,123 @@ input:focus, select:focus {
     flex-shrink: 0;
 }
 
+/* ============================== Auth pages ============================== */
+.auth-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: radial-gradient(1200px 600px at 50% -10%, #1e293b 0%, #0f172a 55%, #0b1222 100%);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 410px;
+    background: var(--surface);
+    border-radius: 18px;
+    box-shadow: 0 30px 60px -20px rgba(2, 6, 23, 0.55);
+    padding: 34px 32px;
+}
+
+.auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 22px;
+}
+
+.auth-brand-text {
+    font-weight: 700;
+    font-size: 1.12rem;
+    color: var(--text);
+}
+
+.auth-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.auth-sub {
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin: 6px 0 22px;
+}
+
+.auth-card .form-group {
+    margin-bottom: 16px;
+}
+
+.auth-submit {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    margin-top: 6px;
+    font-size: 0.95rem;
+}
+
+.auth-foot {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.auth-foot a {
+    color: var(--primary-d);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-foot a:hover {
+    text-decoration: underline;
+}
+
+.auth-alert {
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.87rem;
+    font-weight: 500;
+    margin-bottom: 18px;
+}
+
+.auth-alert-error {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.auth-alert-ok {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+/* sidebar logout */
+.logout-btn {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    font-family: inherit;
+    border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.logout-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.logout-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
 /* ============================== Responsive ============================== */
 @media (max-width: 860px) {
     .app-shell {

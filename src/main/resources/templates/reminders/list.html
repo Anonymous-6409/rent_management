@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Reminders')}"></head>
 <body>
 <div th:replace="~{fragments/layout :: page('Payment Reminders', 'reminders', ~{::content})}">
@@ -16,7 +17,7 @@
         <div class="panel">
             <div class="panel-header">
                 <h2>Reminders</h2>
-                <div class="panel-actions">
+                <div class="panel-actions" sec:authorize="hasAnyRole('ADMIN','OWNER')">
                     <form th:action="@{/reminders/generate}" method="post">
                         <button type="submit" class="btn btn-primary">Generate for this period</button>
                     </form>
@@ -37,7 +38,7 @@
                         <th>Amount</th>
                         <th>Due</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th sec:authorize="hasAnyRole('ADMIN','OWNER')">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -52,7 +53,7 @@
                         <td class="cell-muted" th:text="${r.dueDate}">2026-06-05</td>
                         <td><span class="badge" th:classappend="'badge-' + ${r.status}"
                                   th:text="${r.status}">PENDING</span></td>
-                        <td>
+                        <td sec:authorize="hasAnyRole('ADMIN','OWNER')">
                             <div class="actions">
                                 <a class="btn btn-sm btn-delete" th:href="@{/reminders/delete/{id}(id=${r.id})}"
                                    onclick="return confirm('Delete this reminder?');">Delete</a>

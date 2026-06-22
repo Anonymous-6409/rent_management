@@ -5,12 +5,15 @@ import com.moneytree.rentmanagement.model.Tenant;
 import com.moneytree.rentmanagement.repository.OwnerRepository;
 import com.moneytree.rentmanagement.repository.PropertyRepository;
 import com.moneytree.rentmanagement.repository.TenantRepository;
+import com.moneytree.rentmanagement.security.CurrentUserService;
 import com.moneytree.rentmanagement.service.PropertyService;
 import com.moneytree.rentmanagement.service.TenantService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -18,11 +21,13 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TenantController.class)
+@WithMockUser
 class TenantControllerTest {
 
     @Autowired
@@ -35,11 +40,18 @@ class TenantControllerTest {
 
     // @WebMvcTest auto-detects the Converter @Components; supply their repositories.
     @MockBean
+    private CurrentUserService currentUserService;
+    @MockBean
     private PropertyRepository propertyRepository;
     @MockBean
     private TenantRepository tenantRepository;
     @MockBean
     private OwnerRepository ownerRepository;
+
+    @BeforeEach
+    void defaultAdmin() {
+        lenient().when(currentUserService.isAdmin()).thenReturn(true);
+    }
 
     @Test
     void list_rendersListView() throws Exception {
@@ -69,6 +81,7 @@ class TenantControllerTest {
         when(propertyRepository.findById(1L)).thenReturn(Optional.of(property));
 
         mockMvc.perform(post("/tenants/save")
+                        .with(csrf())
                         .param("name", "Jane Doe")
                         .param("email", "jane@example.com")
                         .param("phone", "555-0100")
@@ -84,6 +97,7 @@ class TenantControllerTest {
         when(propertyService.findAll()).thenReturn(List.of());
 
         mockMvc.perform(post("/tenants/save")
+                        .with(csrf())
                         .param("name", "")
                         .param("email", "not-an-email")
                         .param("phone", ""))

@@ -19,6 +19,14 @@ public class TenantService {
         return tenantRepository.findAll();
     }
 
+    public List<Tenant> findByOwner(Long ownerId) {
+        return tenantRepository.findByPropertyOwnerId(ownerId);
+    }
+
+    public long countByOwner(Long ownerId) {
+        return tenantRepository.countByPropertyOwnerId(ownerId);
+    }
+
     public Tenant findById(Long id) {
         return tenantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid tenant id: " + id));

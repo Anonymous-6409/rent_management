@@ -19,6 +19,14 @@ public class PropertyService {
         return propertyRepository.findAll();
     }
 
+    public List<Property> findByOwner(Long ownerId) {
+        return propertyRepository.findByOwnerId(ownerId);
+    }
+
+    public long countByOwner(Long ownerId) {
+        return propertyRepository.countByOwnerId(ownerId);
+    }
+
     public Property findById(Long id) {
         return propertyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid property id: " + id));

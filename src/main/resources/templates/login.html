@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sign in · RentManager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body class="auth-body">
+<div class="auth-card">
+    <div class="auth-brand">
+        <span class="brand-logo">RM</span>
+        <span class="auth-brand-text">RentManager</span>
+    </div>
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-sub">Sign in to manage your properties.</p>
+
+    <div th:if="${param.error}" class="auth-alert auth-alert-error">
+        Invalid username or password.
+    </div>
+    <div th:if="${param.logout}" class="auth-alert auth-alert-ok">
+        You have been signed out.
+    </div>
+    <div th:if="${param.registered}" class="auth-alert auth-alert-ok">
+        Account created. Please sign in.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" autofocus required/>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required/>
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit">Sign in</button>
+    </form>
+
+    <p class="auth-foot">
+        Don't have an account?
+        <a th:href="@{/register}">Create one</a>
+    </p>
+</div>
+</body>
+</html>

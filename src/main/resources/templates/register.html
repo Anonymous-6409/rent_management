@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Create account · RentManager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body class="auth-body">
+<div class="auth-card">
+    <div class="auth-brand">
+        <span class="brand-logo">RM</span>
+        <span class="auth-brand-text">RentManager</span>
+    </div>
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-sub">Get started in less than a minute.</p>
+
+    <form th:action="@{/register}" th:object="${registrationForm}" method="post">
+        <div class="form-group">
+            <label>Full name</label>
+            <input type="text" th:field="*{fullName}" placeholder="Jane Doe"/>
+            <div class="error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+        </div>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" th:field="*{username}" placeholder="jane"/>
+            <div class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" th:field="*{password}" placeholder="At least 6 characters"/>
+            <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+        </div>
+        <div class="form-group">
+            <label>Confirm password</label>
+            <input type="password" th:field="*{confirmPassword}"/>
+            <div class="error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit">Create account</button>
+    </form>
+
+    <p class="auth-foot">
+        Already have an account?
+        <a th:href="@{/login}">Sign in</a>
+    </p>
+</div>
+</body>
+</html>

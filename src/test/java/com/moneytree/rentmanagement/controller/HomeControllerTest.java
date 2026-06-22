@@ -3,6 +3,7 @@ package com.moneytree.rentmanagement.controller;
 import com.moneytree.rentmanagement.repository.OwnerRepository;
 import com.moneytree.rentmanagement.repository.PropertyRepository;
 import com.moneytree.rentmanagement.repository.TenantRepository;
+import com.moneytree.rentmanagement.security.CurrentUserService;
 import com.moneytree.rentmanagement.service.OwnerService;
 import com.moneytree.rentmanagement.service.PaymentService;
 import com.moneytree.rentmanagement.service.PropertyService;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -22,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(HomeController.class)
+@WithMockUser
 class HomeControllerTest {
 
     @Autowired
@@ -37,6 +40,8 @@ class HomeControllerTest {
     private OwnerService ownerService;
     @MockBean
     private ReminderService reminderService;
+    @MockBean
+    private CurrentUserService currentUserService;
 
     // Required because @WebMvcTest auto-detects the Converter @Components,
     // which depend on these repositories.
@@ -49,6 +54,7 @@ class HomeControllerTest {
 
     @Test
     void dashboard_rendersWithSummaryAttributes() throws Exception {
+        when(currentUserService.isAdmin()).thenReturn(true);
         when(propertyService.count()).thenReturn(3L);
         when(tenantService.count()).thenReturn(5L);
         when(paymentService.totalCollected()).thenReturn(new BigDecimal("2500.00"));

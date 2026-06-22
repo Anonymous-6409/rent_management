@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Tenants')}"></head>
 <body>
 <div th:replace="~{fragments/layout :: page('Tenants', 'tenants', ~{::content})}">
@@ -8,7 +9,7 @@
         <div class="panel">
             <div class="panel-header">
                 <h2>All Tenants</h2>
-                <a class="btn btn-primary" th:href="@{/tenants/new}">+ Add Tenant</a>
+                <a class="btn btn-primary" th:href="@{/tenants/new}" sec:authorize="hasAnyRole('ADMIN','OWNER')">+ Add Tenant</a>
             </div>
             <div class="table-wrap">
                 <table>
@@ -20,7 +21,7 @@
                         <th>Property</th>
                         <th>Lease Start</th>
                         <th>Lease End</th>
-                        <th>Actions</th>
+                        <th sec:authorize="hasAnyRole('ADMIN','OWNER')">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -31,7 +32,7 @@
                         <td th:text="${tenant.property != null ? tenant.property.name : '-'}">Property</td>
                         <td class="cell-muted" th:text="${tenant.leaseStart}">2026-01-01</td>
                         <td class="cell-muted" th:text="${tenant.leaseEnd}">2026-12-31</td>
-                        <td>
+                        <td sec:authorize="hasAnyRole('ADMIN','OWNER')">
                             <div class="actions">
                                 <a class="btn btn-sm btn-edit" th:href="@{/tenants/edit/{id}(id=${tenant.id})}">Edit</a>
                                 <a class="btn btn-sm btn-delete" th:href="@{/tenants/delete/{id}(id=${tenant.id})}"

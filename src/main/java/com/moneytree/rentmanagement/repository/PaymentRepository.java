@@ -9,6 +9,8 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     List<Payment> findByTenantId(Long tenantId);
 
+    List<Payment> findByTenantPropertyOwnerId(Long ownerId);
+
     boolean existsByTenantIdAndPeriodMonthAndStatus(Long tenantId,
                                                     String periodMonth,
                                                     PaymentStatus status);

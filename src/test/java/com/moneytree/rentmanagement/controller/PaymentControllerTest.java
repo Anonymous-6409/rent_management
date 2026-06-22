@@ -6,12 +6,15 @@ import com.moneytree.rentmanagement.model.Tenant;
 import com.moneytree.rentmanagement.repository.OwnerRepository;
 import com.moneytree.rentmanagement.repository.PropertyRepository;
 import com.moneytree.rentmanagement.repository.TenantRepository;
+import com.moneytree.rentmanagement.security.CurrentUserService;
 import com.moneytree.rentmanagement.service.PaymentService;
 import com.moneytree.rentmanagement.service.TenantService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -19,11 +22,13 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PaymentController.class)
+@WithMockUser
 class PaymentControllerTest {
 
     @Autowired
@@ -36,11 +41,18 @@ class PaymentControllerTest {
 
     // @WebMvcTest auto-detects the Converter @Components; supply their repositories.
     @MockBean
+    private CurrentUserService currentUserService;
+    @MockBean
     private PropertyRepository propertyRepository;
     @MockBean
     private TenantRepository tenantRepository;
     @MockBean
     private OwnerRepository ownerRepository;
+
+    @BeforeEach
+    void defaultAdmin() {
+        lenient().when(currentUserService.isAdmin()).thenReturn(true);
+    }
 
     @Test
     void list_rendersListView() throws Exception {
@@ -71,6 +83,7 @@ class PaymentControllerTest {
         when(tenantRepository.findById(1L)).thenReturn(Optional.of(tenant));
 
         mockMvc.perform(post("/payments/save")
+                        .with(csrf())
                         .param("tenant", "1")
                         .param("periodMonth", "2026-06")
                         .param("amount", "1200.00")
@@ -87,6 +100,7 @@ class PaymentControllerTest {
         when(tenantService.findAll()).thenReturn(List.of());
 
         mockMvc.perform(post("/payments/save")
+                        .with(csrf())
                         .param("status", PaymentStatus.PAID.name()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("payments/form"))

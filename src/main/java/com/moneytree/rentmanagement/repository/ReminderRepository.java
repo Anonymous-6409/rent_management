@@ -11,7 +11,11 @@ public interface ReminderRepository extends JpaRepository<Reminder, Long> {
 
     List<Reminder> findByStatus(ReminderStatus status);
 
+    List<Reminder> findByStatusAndPropertyOwnerId(ReminderStatus status, Long ownerId);
+
     List<Reminder> findAllByOrderByCreatedAtDesc();
+
+    List<Reminder> findByPropertyOwnerIdOrderByCreatedAtDesc(Long ownerId);
 
     boolean existsByTenantIdAndPeriodMonthAndRecipientType(Long tenantId,
                                                            String periodMonth,

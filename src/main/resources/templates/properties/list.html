@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/layout :: head('Properties')}"></head>
 <body>
 <div th:replace="~{fragments/layout :: page('Properties', 'properties', ~{::content})}">
@@ -8,7 +9,7 @@
         <div class="panel">
             <div class="panel-header">
                 <h2>All Properties</h2>
-                <a class="btn btn-primary" th:href="@{/properties/new}">+ Add Property</a>
+                <a class="btn btn-primary" th:href="@{/properties/new}" sec:authorize="hasAnyRole('ADMIN','OWNER')">+ Add Property</a>
             </div>
             <div class="table-wrap">
                 <table>
@@ -20,7 +21,7 @@
                         <th>Monthly Rent</th>
                         <th>Owner</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th sec:authorize="hasAnyRole('ADMIN','OWNER')">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -31,7 +32,7 @@
                         <td class="cell-strong" th:text="'$' + ${#numbers.formatDecimal(property.monthlyRent, 1, 2)}">$0.00</td>
                         <td th:text="${property.owner != null ? property.owner.name : '-'}">Owner</td>
                         <td><span class="badge" th:classappend="'badge-' + ${property.status}" th:text="${property.status}">VACANT</span></td>
-                        <td>
+                        <td sec:authorize="hasAnyRole('ADMIN','OWNER')">
                             <div class="actions">
                                 <a class="btn btn-sm btn-edit" th:href="@{/properties/edit/{id}(id=${property.id})}">Edit</a>
                                 <a class="btn btn-sm btn-delete" th:href="@{/properties/delete/{id}(id=${property.id})}"
