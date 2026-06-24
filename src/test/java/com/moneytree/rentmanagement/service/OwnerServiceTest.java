@@ -1,7 +1,10 @@
 package com.moneytree.rentmanagement.service;
 
 import com.moneytree.rentmanagement.model.Owner;
+import com.moneytree.rentmanagement.model.Property;
+import com.moneytree.rentmanagement.model.User;
 import com.moneytree.rentmanagement.repository.OwnerRepository;
+import com.moneytree.rentmanagement.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +23,9 @@ class OwnerServiceTest {
 
     @Mock
     private OwnerRepository ownerRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private OwnerService ownerService;
@@ -57,9 +63,38 @@ class OwnerServiceTest {
     }
 
     @Test
-    void deleteById_delegatesToRepository() {
+    void deleteById_noProperties_deletesOwnerAndLinkedLogin() {
+        Owner o = owner(2L);
+        when(ownerRepository.findById(2L)).thenReturn(Optional.of(o));
+        User login = new User();
+        when(userRepository.findByOwnerId(2L)).thenReturn(Optional.of(login));
+
         ownerService.deleteById(2L);
 
-        verify(ownerRepository).deleteById(2L);
+        verify(userRepository).delete(login);
+        verify(ownerRepository).delete(o);
+    }
+
+    @Test
+    void deleteById_withProperties_throwsAndDeletesNothing() {
+        Owner o = owner(2L);
+        o.setProperties(List.of(new Property()));
+        when(ownerRepository.findById(2L)).thenReturn(Optional.of(o));
+
+        assertThatThrownBy(() -> ownerService.deleteById(2L))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("propert");
+
+        verify(ownerRepository, never()).delete(any());
+        verify(userRepository, never()).delete(any());
+    }
+
+    @Test
+    void deleteById_missingOwner_isNoOp() {
+        when(ownerRepository.findById(9L)).thenReturn(Optional.empty());
+
+        ownerService.deleteById(9L);
+
+        verify(ownerRepository, never()).delete(any());
     }
 }

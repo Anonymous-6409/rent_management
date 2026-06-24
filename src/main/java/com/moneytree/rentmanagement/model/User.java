@@ -27,6 +27,10 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    /** True when the user must set a new password before using the app (e.g. after a temp password). */
+    @Column(name = "must_change_password", nullable = false)
+    private boolean mustChangePassword = false;
+
     /** Set when this login belongs to a property owner (role OWNER); null for admin/staff. */
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id", unique = true)
@@ -81,6 +85,14 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
     }
 
     public Owner getOwner() {

@@ -13,7 +13,7 @@
 
     <groupId>com.moneytree</groupId>
     <artifactId>rent-management</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1</version>
     <name>rent-management</name>
     <description>Rent Management application built with Spring Boot MVC and MySQL</description>
 

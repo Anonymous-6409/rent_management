@@ -84,8 +84,13 @@ public class OwnerController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        ownerService.deleteById(id);
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            ownerService.deleteById(id);
+            redirectAttributes.addFlashAttribute("message", "Owner deleted.");
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("ownerDeleteError", ex.getMessage());
+        }
         return "redirect:/owners";
     }
 }

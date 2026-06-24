@@ -75,8 +75,10 @@
         </nav>
 
         <div class="sidebar-footer">
-            <div class="su-avatar"
-                 th:text="${#strings.toUpperCase(#strings.substring(#authentication.name, 0, 1))}">U</div>
+            <div class="su-avatar">
+                <span th:text="${#strings.toUpperCase(#strings.substring(#authentication.name, 0, 1))}">U</span>
+                <span class="su-status" title="Online"></span>
+            </div>
             <div class="su-meta">
                 <span class="su-name" sec:authentication="name">user</span>
                 <span class="su-role" sec:authentication="principal.authorities">role</span>

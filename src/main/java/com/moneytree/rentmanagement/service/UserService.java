@@ -41,6 +41,7 @@ public class UserService {
             throw new IllegalArgumentException("Current password is incorrect");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
+        user.setMustChangePassword(false);
         userRepository.save(user);
     }
 
@@ -78,6 +79,8 @@ public class UserService {
         user.setRole(Role.OWNER);
         user.setOwner(owner);
         user.setEnabled(true);
+        // Force a password change on first login since this is a temporary password.
+        user.setMustChangePassword(true);
         userRepository.save(user);
         return tempPassword;
     }
